@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amigo Secreto de Natal</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h1>🎅 Amigo Secreto de Natal 🎁</h1>
+    <p>Clique no botão para sortear dois nomes!</p>
+    <button id="sortear-btn">Sortear</button>
+    <button id="resetar-btn">Resetar Sorteio</button>
+
+    <div id="resultados" class="result-box" style="display: none;">
+        <p id="nome1" class="names"></p>
+        <p id="nome2" class="names"></p>
+    </div>
+
+    <div id="mensagem-erro" style="display: none; color: red; margin-top: 20px;"></div>
+
+    <h2>Adicionar Novo Nome</h2>
+    <form id="adicionar-form">
+        <input type="text" id="novo-nome" placeholder="Digite um nome..." required>
+        <button type="submit">Adicionar</button>
+    </form>
+    <p id="mensagem-adicao" style="display: none; color: green; margin-top: 20px;"></p>
+
+    <script>
+        document.getElementById("sortear-btn").addEventListener("click", async () => {
+            try {
+                const response = await fetch("/sortear");
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById("nome1").innerText = `🎄 Nome 1: ${data.nome1}`;
+                    document.getElementById("nome2").innerText = `🎄 Nome 2: ${data.nome2}`;
+                    document.getElementById("resultados").style.display = "block";
+                    document.getElementById("mensagem-erro").style.display = "none";
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (error) {
+                document.getElementById("mensagem-erro").innerText = error.message;
+                document.getElementById("mensagem-erro").style.display = "block";
+            }
+        });
+
+        document.getElementById("resetar-btn").addEventListener("click", async () => {
+            const response = await fetch("/resetar", { method: "POST" });
+            const data = await response.json();
+            alert(data.message);
+            location.reload();
+        });
+
+        document.getElementById("adicionar-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const novoNome = document.getElementById("novo-nome").value;
+            try {
+                const response = await fetch("/adicionar", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nome: novoNome }),
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById("mensagem-adicao").innerText = data.message;
+                    document.getElementById("mensagem-adicao").style.display = "block";
+                    document.getElementById("mensagem-erro").style.display = "none";
+                    document.getElementById("novo-nome").value = "";
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (error) {
+                document.getElementById("mensagem-erro").innerText = error.message;
+                document.getElementById("mensagem-erro").style.display = "block";
+                document.getElementById("mensagem-adicao").style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>
