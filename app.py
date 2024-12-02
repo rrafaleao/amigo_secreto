@@ -4,7 +4,7 @@ import random
 app = Flask(__name__)
 
 # Lista inicial de nomes
-nomes_restantes = []
+nomes_restantes = ["Maria", "João", "Felipe", "Rafael", "Roberta", "Luisa", "Mariani", "Erick"]
 nomes_sorteados = []
 
 @app.route("/", methods=["GET"])
@@ -37,7 +37,7 @@ def sortear():
 @app.route("/resetar", methods=["POST"])
 def resetar():
     global nomes_restantes, nomes_sorteados
-    nomes_restantes = ["Ana", "Bruno", "Carlos", "Daniela", "Eduardo", "Fernanda", "Gabriel", "Helena", "Isabela", "João"]
+    nomes_restantes = ["Maria", "João", "Felipe", "Rafael", "Roberta", "Luisa", "Mariani", "Erick"]
     nomes_sorteados = []
     return jsonify({"message": "Sorteio resetado com sucesso!", "restantes": nomes_restantes})
 
